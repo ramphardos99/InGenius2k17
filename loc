@@ -1,0 +1,29 @@
+function OnStart()
+{   
+	lay = app.CreateLayout( "Linear", "FillXY,VCenter" );
+ 
+	txt = app.CreateText( "", 0.9, 0.9, "Multiline,Left" );
+	txt.SetTextColor( "#ffffffff" );
+	lay.AddChild( txt );
+	
+	loc = app.CreateLocator( "GPS,Network" );
+	loc.SetOnChange( loc_OnChange ); 
+	loc.SetRate( 10 ); //10 seconds.
+	loc.Start();
+	app.AddLayout( lay );
+	log = new Array(); 
+	Log( "Locating..." );
+}
+function loc_OnChange( data )
+{
+	Log( data.provider+": Lat "+data.latitude+", Lng "+data.longitude 
+		+", Spd "+data.speed+", Bear "+data.bearing
+		+", Alt "+data.altitude+", Accu "+data.accuracy+"" );
+}
+function Log( msg )
+{
+	if( txt.GetLineTop( txt.GetLineCount() ) >= 0.8 ) 
+		log.shift();
+	log.push( msg + "\n" );
+	txt.SetText( log.join("") );
+}
